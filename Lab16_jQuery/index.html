@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Мой сайт по структурам данных</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script> <!-- Это подключает jQuery -->
+    <style>
+        body { font-family: Arial; text-align: center; background: lightgray; }
+        .numero { display: inline-block; width: 50px; height: 50px; background: blue; color: white; margin: 5px; padding: 10px; border-radius: 50%; } /* Стиль для чисел */
+        #slideshow img { width: 300px; height: 200px; display: none; } /* Скрыть все картинки кроме первой */
+        #slideshow img:first-child { display: block; } /* Показать первую картинку */
+    </style>
+</head>
+<body>
+    <h1>Структуры и алгоритмы: Моя курсовая</h1>
+    <p>Добавьте числа в список, сортируйте или ищите. Смотрите примеры в слайдшоу.</p>
+    
+    <!-- Поле для ввода и кнопка -->
+    <input type="number" id="numeroInput" placeholder="Введите число"> <!-- Поле для числа -->
+    <button id="agregarBtn">Добавить</button> <!-- Кнопка добавить -->
+    
+    <!-- Место для списка чисел -->
+    <div id="lista"></div>
+    
+    <!-- Кнопки для действий -->
+    <button id="ordenarBtn">Сортировать</button>
+    <button id="buscarBtn">Поиск</button>
+    <button id="borrarBtn">Удалить список</button> <!-- Новый кнопка borrar -->
+    
+    <!-- Слайдшоу (карусель) с твоими изображениями -->
+    <div id="slideshow">
+        <img src="artificial1.jpg" alt="Шаг 1"> <!-- Твоя первая изображение -->
+        <img src="artificial2.jpg" alt="Шаг 2"> <!-- Твоя вторая изображение -->
+        <img src="artificial3.jpg" alt="Шаг 3"> <!-- Твоя третья изображение -->
+    </div>
+    <button id="siguienteBtn">Следующий слайд</button>
+    
+    <script>
+        let listaDatos = []; // Это массив для хранения чисел (структура данных)
+        
+        $(document).ready(function() { // Когда страница загружена, начать
+            // Селекторы jQuery: $("#id") выбирает элемент по id
+            // Иерархические: $("#lista .numero") выбирает все .numero внутри #lista
+            // Селекторы форм: $("#numeroInput") для поля ввода
+            // Фильтры: :first для первого элемента, :contains для текста, [type="number"] для атрибута
+            
+            $("#agregarBtn").on("click", function() { // Событие: клик на кнопку
+                let numero = parseInt($("#numeroInput").val()); // Получить значение из поля (фильтр форм)
+                if (!isNaN(numero)) {
+                    listaDatos.push(numero); // Добавить в массив
+                    actualizarLista(); // Обновить список
+                    $("#numeroInput").val(""); // Очистить поле (метод HTML)
+                } else {
+                    alert("Введите число!"); // Предупреждение
+                }
+            });
+            
+            $("#ordenarBtn").on("click", function() {
+                // Алгоритм сортировки пузырьком
+                for (let i = 0; i < listaDatos.length - 1; i++) {
+                    for (let j = 0; j < listaDatos.length - i - 1; j++) {
+                        if (listaDatos[j] > listaDatos[j + 1]) {
+                            [listaDatos[j], listaDatos[j + 1]] = [listaDatos[j + 1], listaDatos[j]];
+                        }
+                    }
+                }
+                actualizarLista();
+                $("#lista").fadeOut(500).fadeIn(500); // Визуальный эффект: исчезнуть и появиться
+            });
+            
+            $("#buscarBtn").on("click", function() {
+                let buscarNumero = parseInt(prompt("Введите число для поиска:"));
+                let posicion = listaDatos.indexOf(buscarNumero);
+                if (posicion !== -1) {
+                    $("#lista .numero").eq(posicion).css("background", "yellow"); // Метод CSS: изменить цвет
+                    alert("Найдено на позиции " + posicion);
+                } else {
+                    alert("Не найдено!");
+                }
+            });
+            
+            // Новый кнопка borrar
+            $("#borrarBtn").on("click", function() { // Событие: клик на borrar
+                if (confirm("Удалить весь список?")) { // Подтверждение
+                    listaDatos = []; // Очистить массив
+                    actualizarLista(); // Обновить список
+                    $("#lista").fadeOut(300).fadeIn(300); // Эффект для визуализации
+                }
+            });
+            
+            // Карусель с твоими изображениями
+            let slideActual = 0;
+            $("#siguienteBtn").on("click", function() {
+                $("#slideshow img").eq(slideActual).fadeOut(500); // Эффект: исчезнуть
+                slideActual = (slideActual + 1) % $("#slideshow img").length; // Следующий слайд
+                $("#slideshow img").eq(slideActual).fadeIn(500); // Эффект: появиться
+            });
+        });
+        
+        function actualizarLista() {
+            $("#lista").html(""); // Очистить список (метод HTML)
+            listaDatos.forEach(function(num) {
+                $("#lista").append('<div class="numero">' + num + '</div>'); // Добавить число (метод HTML)
+            });
+        }
+    </script>
+</body>
+</html>
